@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内容审核运营后台 · MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11.5 11 14l4.5-5"/><path d="M12 3 4.5 6v5.5c0 4.6 3.2 7.8 7.5 9.5 4.3-1.7 7.5-4.9 7.5-9.5V6L12 3Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M18.5 9A7 7 0 0 0 6 6.5L4 9M5.5 15A7 7 0 0 0 18 17.5l2-2.5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9v5M12 17.5h.01"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <aside class="sidebar mvp-sidebar">
+    <div class="brand"><div class="brand-mark">审</div><div><strong>内容审核</strong><span>运营后台 · MVP</span></div></div>
+    <nav id="mainNav">
+      <div class="nav-label">审核运营</div>
+      <a href="#reviews" data-page="reviews" class="active"><svg><use href="#i-check"/></svg><span>审核任务</span><em>28</em></a>
+      <a href="#tasks" data-page="tasks"><svg><use href="#i-search"/></svg><span>任务查询</span></a>
+      <div class="nav-label">规则配置</div>
+      <a href="#policies" data-page="policies"><svg><use href="#i-sliders"/></svg><span>策略中心</span></a>
+    </nav>
+    <div class="mvp-note"><b>MVP 范围</b><p>头像、昵称、简介、AI 音乐评论</p><span>机审 + 人工审核</span></div>
+    <div class="sidebar-foot"><span class="status-dot"></span><div><b>审核服务正常</b><small>最近检查 14:32</small></div></div>
+  </aside>
+
+  <main class="main-shell">
+    <header class="topbar">
+      <div class="breadcrumb"><span>内容审核运营后台</span><svg><use href="#i-chevron"/></svg><strong id="crumbTitle">审核任务</strong></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="globalSearch" title="搜索任务"><svg><use href="#i-search"/></svg></button>
+        <div class="divider"></div>
+        <button class="profile"><span class="avatar">林</span><span><b>林子涵</b><small>审核主管</small></span><svg><use href="#i-chevron"/></svg></button>
+      </div>
+    </header>
+
+    <div class="page-wrap">
+      <section class="page active" data-view="reviews">
+        <div class="page-head compact">
+          <div><p class="eyebrow">MANUAL REVIEW QUEUE</p><h1>审核任务</h1><p>仅展示需要人工二次审核的任务，按用户上传时间倒序排列。</p></div>
+          <div class="head-actions"><button class="btn ghost"><svg><use href="#i-refresh"/></svg>刷新</button></div>
+        </div>
+
+        <div class="strategy-guide">
+          <div><span class="strategy-icon auto"><svg><use href="#i-check"/></svg></span><div><b>先发后审</b><p>机审通过后自动发布，不进入人工审核队列；运营可在任务查询中直接驳回。</p></div></div>
+          <div><span class="strategy-icon manual"><svg><use href="#i-user"/></svg></span><div><b>先审后发</b><p>机审通过后进入本页，必须人工二次审核通过才可发布。</p></div></div>
+          <span class="guide-tip">当前队列均为先审后发任务</span>
+        </div>
+
+        <div class="metric-grid mvp-metrics mvp-task-metrics">
+          <article class="metric-card"><span>待人工审核</span><strong>1,284</strong></article>
+        </div>
+
+        <div class="filter-bar time-filter-bar">
+          <label class="search-box"><svg><use href="#i-search"/></svg><input id="reviewSearch" placeholder="搜索任务 ID、用户 ID 或内容关键词" /></label>
+          <label class="date-range-filter" title="默认查询近 7 天上传的内容"><span>上传时间</span><em>近7天</em><input type="date" id="reviewStartDate" value="2026-07-09"/><i>至</i><input type="date" id="reviewEndDate" value="2026-07-15"/></label>
+          <select id="contentTypeFilter"><option value="all">全部内容类型</option><option value="头像">用户头像</option><option value="昵称">用户昵称</option><option value="简介">用户简介</option><option value="评论">评论与回复</option></select>
+          <select><option>全部地区</option><option>中国大陆</option><option>欧盟</option><option>北美</option><option>东南亚</option></select>
+          <select><option>全部风险类型</option><option>色情低俗</option><option>骚扰辱骂</option><option>广告垃圾</option></select>
+          <button class="btn filter"><svg><use href="#i-sliders"/></svg>更多筛选</button>
+        </div>
+        <article class="panel table-panel">
+          <div class="table-meta review-table-meta"><span>共 <b id="reviewCount">8</b> 条结果</span><div class="batch-actions" id="batchActions"><span>已选择 <b id="selectedCount">0</b> 条</span><button class="btn batch-pass" id="batchPassBtn" disabled>批量审核通过</button><button class="btn batch-reject" id="batchRejectBtn" disabled>批量驳回</button></div></div>
+          <div class="table-scroll"><table class="data-table review-data-table"><thead><tr><th><label class="select-page-control" title="勾选当前页面全部任务"><input type="checkbox" id="reviewSelectAll" aria-label="本页全选审核任务"/><span>本页全选</span></label></th><th class="review-content-column">审核内容</th><th>任务信息</th><th>机审结果</th><th>地区 / 策略</th><th>用户上传时间</th><th>操作</th></tr></thead><tbody id="reviewTable"></tbody></table></div>
+          <div class="pagination"><span>每页 20 条</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>…</button><button>65</button><button>›</button></div></div>
+        </article>
+      </section>
+
+      <section class="page" data-view="tasks">
+        <div class="page-head compact">
+          <div><p class="eyebrow">CONTENT REVIEW EXPLORER</p><h1>任务查询</h1><p>展示需要运营追溯的用户上传内容，包括不检查直发、机审、人工审核及用户更改，并支持对已通过内容执行运营驳回。</p></div>
+          <button class="btn ghost">导出查询结果</button>
+        </div>
+
+        <div class="terminal-rule"><svg><use href="#i-alert"/></svg><div><b>驳回是不可逆终态</b><p>无论采用哪种过审策略，运营均可驳回已通过内容；驳回后内容下架，任务不可再次编辑或改判。</p></div></div>
+
+        <article class="panel search-hero task-search-hero"><h2>查找内容审查记录</h2><p>支持任务 ID、业务对象 ID、用户 ID 和内容关键词</p><div class="hero-search"><svg><use href="#i-search"/></svg><input id="taskSearch" placeholder="例如：TSK-260714-09281 或 UID-882104"/><button class="btn primary" id="taskSearchBtn">查询</button></div></article>
+
+        <div class="filter-bar time-filter-bar">
+          <label class="date-range-filter" title="默认查询近 7 天创建的审查记录"><span>记录时间</span><em>近7天</em><input type="date" id="taskStartDate" value="2026-07-09"/><i>至</i><input type="date" id="taskEndDate" value="2026-07-15"/></label>
+          <select id="taskStatusFilter"><option value="all">全部任务状态</option><option value="待人工审核">待人工审核</option><option value="已通过">已通过</option><option value="机审驳回">机审驳回</option><option value="已驳回">已驳回</option><option value="用户更改">用户更改</option></select>
+          <select id="taskModeFilter"><option value="all">全部过审策略</option><option value="不检查">不检查</option><option value="先发后审">先发后审</option><option value="先审后发">先审后发</option></select>
+          <select id="taskContentTypeFilter"><option value="all">全部内容类型</option><option value="头像">用户头像</option><option value="昵称">用户昵称</option><option value="简介">用户简介</option><option value="评论">评论与回复</option></select>
+          <select><option>全部地区</option><option>中国大陆</option><option>欧盟</option><option>北美</option></select>
+          <div class="spacer"></div><span class="result-count">共 <b id="taskCount">8</b> 条</span>
+        </div>
+
+        <article class="panel table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>任务 / 内容</th><th>用户</th><th>内容类型</th><th>记录时间</th><th>过审策略</th><th>审核链路</th><th>审核人员 / 管理账号</th><th>当前状态</th><th>发布时间</th><th>操作</th></tr></thead><tbody id="taskTable"></tbody></table></div><div class="pagination"><span>每页 20 条</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>›</button></div></div></article>
+      </section>
+
+      <section class="page" data-view="policies">
+        <div class="page-head compact"><div><p class="eyebrow">POLICY CENTER</p><h1>策略中心</h1><p>按国家配置过审策略，以及头像、昵称、简介和评论的审核范围。</p></div><button class="btn primary" id="newPolicy">新建策略</button></div>
+
+        <div class="policy-definition-grid">
+          <article class="definition-card auto-card"><div><span>策略 A</span><h2>先发后审</h2></div><strong>机审通过 → 自动发布</strong><p>机审通过后无需人工审核即可发布。运营复审通过后仍可再次驳回；驳回后不可编辑。</p></article>
+          <article class="definition-card manual-card"><div><span>策略 B</span><h2>先审后发</h2></div><strong>机审通过 → 人工二审 → 发布</strong><p>机审通过后生成审核任务，人工审核通过后才发布。发布后仍可运营驳回；驳回后不可编辑。</p></article>
+        </div>
+
+        <div class="global-default-banner no-check-banner"><i class="soft amber"><svg><use href="#i-alert"/></svg></i><div><span>国家审核默认规则</span><b>未配置审核范围 · 不检查</b><p>用户上传内容不调用机审，写入业务库后立即公开并进入任务查询；运营可复审或直接驳回。平台默认资料等免审内容不进入任务查询。</p></div><div class="default-stats"><span><b id="configuredRegionCount">3</b>已配置国家</span><span><b>范围</b>不可重复</span></div></div>
+
+        <div class="filter-bar"><label class="search-box"><svg><use href="#i-search"/></svg><input id="policySearch" placeholder="搜索策略名称或地区"/></label><select><option>全部状态</option><option>已生效</option></select><select><option>全部过审策略</option><option>先发后审</option><option>先审后发</option></select><div class="spacer"></div></div>
+        <article class="panel table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>策略名称</th><th>适用国家</th><th>过审策略</th><th>审核范围</th><th>机审通过后</th><th>状态</th><th>生效时间</th><th>操作</th></tr></thead><tbody id="policyTable"></tbody></table></div></article>
+      </section>
+    </div>
+  </main>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="review-drawer" id="reviewDrawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="badge warning">待人工二审</span><h2 id="drawerTitle">审核任务</h2><p id="drawerMeta">先审后发 · 机审已通过</p></div><button class="icon-btn" data-close-drawer><svg><use href="#i-x"/></svg></button></div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-actions"><button class="btn ghost" data-close-drawer>暂不处理</button><div><button class="btn danger" id="rejectTask">驳回并下架</button><button class="btn success-btn" id="passTask">人工审核通过</button></div></div>
+  </aside>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal" id="policyModal" aria-hidden="true">
+    <div class="modal-head"><div><h2>新建地区策略</h2><p>选择过审策略和本期支持的内容审核范围。</p></div><button class="icon-btn" data-close-modal><svg><use href="#i-x"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <label class="full"><span>策略名称</span><input id="policyNameInput" placeholder="例如：欧盟用户资料先审策略"/></label>
+        <label class="full"><span>适用国家（单选）</span><select id="policyCountrySelect"><option value="">请选择国家</option><option value="中国">中国</option><option value="美国">美国</option><option value="德国">德国</option><option value="日本">日本</option><option value="韩国">韩国</option><option value="新加坡">新加坡</option></select></label>
+        <label class="full"><span>过审策略</span><select id="publishModeSelect"><option value="post">先发后审｜机审通过自动发布</option><option value="pre">先审后发｜人工二审通过后发布</option></select></label>
+        <label class="full"><span>审核范围</span><div class="check-group policy-scope-group"><label><input type="checkbox" name="policyScope" value="头像" checked/>用户头像<small></small></label><label><input type="checkbox" name="policyScope" value="昵称" checked/>用户昵称<small></small></label><label><input type="checkbox" name="policyScope" value="简介" checked/>用户简介<small></small></label><label><input type="checkbox" name="policyScope" value="评论、回复" checked/>评论与回复<small></small></label></div></label>
+      </div>
+      <div class="form-notice" id="modeHelp"><svg><use href="#i-alert"/></svg><span>先发后审：机审通过后自动发布，无需人工审核；发布后仍可由运营驳回。</span></div>
+      <div class="policy-effective-note">保存后策略立即生效。所选国家中，已被其他策略配置的审核范围会置灰且保持勾选，无法重复配置；未配置范围按“不检查”处理，内容直接公开、进入任务查询并支持运营驳回。</div>
+    </div>
+    <div class="modal-actions"><button class="btn ghost" data-close-modal>取消</button><button class="btn primary" id="savePolicy">保存并立即生效</button></div>
+  </div>
+
+  <div class="confirm-dialog" id="rejectConfirm" aria-hidden="true">
+    <div class="confirm-icon"><svg><use href="#i-alert"/></svg></div><h2>确认驳回该内容？</h2><p>驳回后内容将立即下架，任务进入不可编辑终态，无法再次修改审核结论。</p><label><span>驳回原因</span><select id="rejectReason"><option value="">请选择原因</option><option>色情低俗</option><option>骚扰辱骂</option><option>广告垃圾</option><option>其他违规</option></select></label><div><button class="btn ghost" data-close-confirm>取消</button><button class="btn danger" id="confirmReject">确认驳回</button></div>
+  </div>
+
+  <div class="command-palette" id="commandPalette"><div class="command-box"><svg><use href="#i-search"/></svg><input autofocus placeholder="搜索任务或用户…"/><kbd>ESC</kbd></div><div class="command-results"><span>MVP 快速跳转</span><button data-route="reviews"><svg><use href="#i-check"/></svg>审核任务<small>1,284 条待处理</small></button><button data-route="tasks"><svg><use href="#i-search"/></svg>任务查询<small>查询与运营驳回</small></button><button data-route="policies"><svg><use href="#i-sliders"/></svg>策略中心<small>42 个运营地区</small></button></div></div>
+  <div class="toast" id="toast"><svg><use href="#i-check"/></svg><span>操作成功</span></div>
+  <script src="app.js"></script>
+</body>
+</html>
