@@ -1,7 +1,17 @@
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-const pageTitles = {reviews:'审核任务', tasks:'任务查询', policies:'策略中心'};
+const pageTitles = {
+  reviews:'审核任务',
+  tasks:'任务查询',
+  policies:'策略中心',
+  'user-assets':'用户资产查询',
+  'credit-adjust':'Credit 增减管理',
+  membership:'会员权益管理',
+  'credit-ledger':'Credits 消耗与过期流水',
+  'subscription-orders':'订阅订单流水',
+  'pack-orders':'加油包订单流水'
+};
 
 function avatarData(initial, c1, c2){
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="160" height="160" rx="24" fill="url(#g)"/><circle cx="80" cy="62" r="29" fill="rgba(255,255,255,.88)"/><path d="M29 146c5-34 25-51 51-51s46 17 51 51" fill="rgba(255,255,255,.88)"/><text x="80" y="153" text-anchor="middle" font-size="13" font-family="sans-serif" fill="rgba(21,32,51,.68)">${initial}</text></svg>`;
@@ -173,10 +183,31 @@ function saveRegionalPolicies(){
 function route(page){
   const target=pageTitles[page]?page:'reviews';
   $$('.page').forEach(p=>p.classList.toggle('active',p.dataset.view===target));
-  $$('#mainNav a').forEach(a=>a.classList.toggle('active',a.dataset.page===target));
+  const activeNavPage=['credit-adjust','membership'].includes(target)?'user-assets':target;
+  $$('#mainNav a').forEach(a=>a.classList.toggle('active',a.dataset.page===activeNavPage));
+  const isAssetChild=['credit-adjust','membership'].includes(target);
+  $('#crumbParent').hidden=!isAssetChild;
+  $('#crumbParentChevron').hidden=!isAssetChild;
+  $('#crumbParent').textContent=isAssetChild?'用户资产查询':'';
   $('#crumbTitle').textContent=pageTitles[target];
+  document.title=`${pageTitles[target]} · Vanso 运营后台`;
   if(location.hash!==`#${target}`) history.replaceState(null,'',`#${target}`);
   window.scrollTo(0,0);
+}
+
+function filterStaticTable(input){
+  const page=input.closest('.page');
+  const query=input.value.trim().toLowerCase();
+  $$('tbody tr',page).forEach(row=>row.style.display=row.textContent.toLowerCase().includes(query)?'':'none');
+}
+
+function filterApplicationTable(select){
+  const page=select.closest('.page');
+  const status=select.value;
+  $$('.application-table tbody tr',page).forEach(row=>{
+    const matches=status==='全部审核状态'||$('[data-application-status]',row)?.textContent.trim()===status;
+    row.style.display=matches?'':'none';
+  });
 }
 
 function openReview(id){
@@ -220,6 +251,11 @@ function bindEvents(){
   window.addEventListener('hashchange',()=>route(location.hash.slice(1)));
   document.addEventListener('click',e=>{
     const routeBtn=e.target.closest('[data-route]');if(routeBtn){route(routeBtn.dataset.route);$('#commandPalette').classList.remove('open');}
+    const segmentBtn=e.target.closest('[data-segment-group] button');if(segmentBtn){$$('button',segmentBtn.closest('[data-segment-group]')).forEach(btn=>btn.classList.toggle('active',btn===segmentBtn));}
+    const queryBtn=e.target.closest('[data-prototype-query]');if(queryBtn)toast('已按当前条件刷新查询结果');
+    const resetBtn=e.target.closest('[data-prototype-reset]');if(resetBtn){const page=resetBtn.closest('.page');$$('input',page).forEach(input=>{if(input.type==='date')return;input.value='';});$$('select',page).forEach(select=>select.selectedIndex=0);$$('tbody tr',page).forEach(row=>row.style.display='');toast('筛选条件已重置');}
+    const submitBtn=e.target.closest('[data-prototype-submit]');if(submitBtn){submitBtn.textContent='已提交飞书审核';submitBtn.disabled=true;toast('申请已提交飞书审核');}
+    const withdrawBtn=e.target.closest('[data-withdraw-application]');if(withdrawBtn){const row=withdrawBtn.closest('tr');const statusCell=$('[data-application-status]',row);statusCell.innerHTML='<span class="badge neutral">已撤回</span>';const operationCell=withdrawBtn.closest('td');operationCell.textContent='—';operationCell.classList.add('empty-operation');toast('申请已撤回，资产与权益均未生效');}
     const reviewBtn=e.target.closest('[data-open-review]');if(reviewBtn)openReview(reviewBtn.dataset.openReview);
     const rejectBtn=e.target.closest('[data-direct-reject]');if(rejectBtn)openRejectConfirm(rejectBtn.dataset.directReject);
     const selectBox=e.target.closest('[data-review-select]');if(selectBox){selectBox.checked?selectedReviewIds.add(selectBox.dataset.reviewSelect):selectedReviewIds.delete(selectBox.dataset.reviewSelect);selectBox.closest('tr').classList.toggle('selected',selectBox.checked);updateBatchActions();}
@@ -258,6 +294,9 @@ function bindEvents(){
   $('#policySearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();$$('#policyTable tr').forEach(row=>row.style.display=row.textContent.toLowerCase().includes(q)?'':'none');});
   $('#policyCountrySelect').addEventListener('change',()=>updateScopeAvailability(true));
   $('#publishModeSelect').addEventListener('change',e=>{$('#modeHelp span').textContent=e.target.value==='post'?'先发后审：机审通过后自动发布，无需人工审核；发布后仍可由运营驳回。':'先审后发：机审通过后进入人工二审队列，人工审核通过后才发布。';updateScopeAvailability();});
+  $$('[data-table-search]').forEach(input=>input.addEventListener('input',()=>filterStaticTable(input)));
+  $$('[data-application-status-filter]').forEach(select=>select.addEventListener('change',()=>filterApplicationTable(select)));
+  $('#commandPalette input').addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();$$('.command-results button').forEach(button=>button.style.display=button.textContent.toLowerCase().includes(q)?'':'none');});
   document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#commandPalette').classList.add('open');}if(e.key==='Escape'){closeReview();closeModal();closeRejectConfirm();$('#commandPalette').classList.remove('open');}});
 }
 
