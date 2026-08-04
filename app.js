@@ -10,7 +10,9 @@ const pageTitles = {
   membership:'会员权益管理',
   'credit-ledger':'Credits 消耗与过期流水',
   'subscription-orders':'订阅订单流水',
-  'pack-orders':'加油包订单流水'
+  'pack-orders':'加油包订单流水',
+  'robot-general':'通用配置',
+  'robot-library':'机器人评论库'
 };
 
 function avatarData(initial, c1, c2){
@@ -186,9 +188,12 @@ function route(page){
   const activeNavPage=['credit-adjust','membership'].includes(target)?'user-assets':target;
   $$('#mainNav a').forEach(a=>a.classList.toggle('active',a.dataset.page===activeNavPage));
   const isAssetChild=['credit-adjust','membership'].includes(target);
-  $('#crumbParent').hidden=!isAssetChild;
-  $('#crumbParentChevron').hidden=!isAssetChild;
-  $('#crumbParent').textContent=isAssetChild?'用户资产查询':'';
+  const isRobotChild=['robot-general','robot-library'].includes(target);
+  const hasParent=isAssetChild||isRobotChild;
+  document.body.classList.toggle('robot-config-active',isRobotChild);
+  $('#crumbParent').hidden=!hasParent;
+  $('#crumbParentChevron').hidden=!hasParent;
+  $('#crumbParent').textContent=isAssetChild?'用户资产查询':isRobotChild?'AI 机器人配置':'';
   $('#crumbTitle').textContent=pageTitles[target];
   document.title=`${pageTitles[target]} · Vanso 运营后台`;
   if(location.hash!==`#${target}`) history.replaceState(null,'',`#${target}`);

@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanso｜AI机器人配置</title>
+  <style>
+    :root {
+      --page: #f4f6f9;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --nav: #111827;
+      --nav-soft: #1f2937;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e5e9f0;
+      --line-strong: #d7dde7;
+      --primary: #2563eb;
+      --primary-soft: #eef4ff;
+      --success: #16865a;
+      --success-soft: #ecfdf3;
+      --warning: #b76e00;
+      --warning-soft: #fff8e6;
+      --danger: #d92d20;
+      --danger-soft: #fff1f0;
+      --radius: 12px;
+      --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 22px rgba(16, 24, 40, .04);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--page);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 14px;
+      color: #cbd5e1;
+      background: var(--nav);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px 22px;
+      color: #fff;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      color: #fff;
+      background: linear-gradient(145deg, #4f7cff, #275bd8);
+      font-weight: 800;
+      letter-spacing: -.5px;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .32);
+    }
+
+    .brand-copy strong { display: block; font-size: 15px; letter-spacing: .2px; }
+    .brand-copy span { display: block; color: #94a3b8; font-size: 12px; }
+
+    .nav-label {
+      padding: 14px 12px 7px;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav-list { display: grid; gap: 4px; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      color: #aeb9c8;
+      transition: .18s ease;
+    }
+
+    .nav-item:hover { color: #fff; background: rgba(255, 255, 255, .055); }
+    .nav-item.active { color: #fff; background: #273449; }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      color: #9db8ff;
+      background: rgba(65, 105, 225, .15);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .workspace { min-width: 0; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 68px;
+      padding: 12px 28px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .94);
+      backdrop-filter: blur(10px);
+    }
+
+    .crumb { color: var(--muted); font-size: 13px; }
+    .crumb strong { color: var(--text); font-weight: 650; }
+
+    .top-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+
+    .status-pill, .timezone-pill, .mini-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pill { color: var(--warning); background: var(--warning-soft); }
+    .timezone-pill { color: #475467; background: #f2f4f7; }
+    .mini-pill { color: var(--primary); background: var(--primary-soft); }
+    .mini-pill.green { color: var(--success); background: var(--success-soft); }
+    .mini-pill.gray { color: #475467; background: #f2f4f7; }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 36px;
+      padding: 7px 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: #344054;
+      background: #fff;
+      font-weight: 600;
+      transition: .16s ease;
+    }
+
+    .btn:hover { border-color: #b9c3d1; background: #f9fafb; }
+    .btn.primary { border-color: var(--primary); color: #fff; background: var(--primary); }
+    .btn.primary:hover { background: #1d4ed8; }
+    .btn.ghost { border-color: transparent; background: transparent; }
+    .btn.danger { border-color: #f2c4bf; color: var(--danger); background: #fff8f7; }
+    .btn.danger:hover { border-color: #e79a92; background: var(--danger-soft); }
+    .btn:disabled { cursor: not-allowed; opacity: .55; }
+
+    .content { max-width: 1500px; margin: 0 auto; padding: 28px 30px 92px; }
+
+    .page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 7px; font-size: 25px; line-height: 1.3; letter-spacing: -.02em; }
+    h2 { margin: 0; font-size: 18px; line-height: 1.4; }
+    h3 { margin-bottom: 10px; font-size: 15px; }
+    .lead { max-width: 780px; margin-bottom: 0; color: var(--muted); }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, .025);
+    }
+
+    .summary-card span { display: block; color: var(--muted); font-size: 12px; }
+    .summary-card strong { display: block; margin: 5px 0 2px; font-size: 16px; }
+    .summary-card small { color: #7b8494; }
+
+    .section {
+      scroll-margin-top: 88px;
+      margin-top: 27px;
+    }
+
+    .page-panel.page-hidden { display: none; }
+    #comment-library { margin-top: 0; }
+    .general-only.page-hidden { display: none; }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 11px;
+    }
+
+    .section-head p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .card + .card { margin-top: 12px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .card-header h3 { margin: 0; }
+    .card-body { padding: 18px; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-2 > .full-span { grid-column: 1 / -1; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+    .subpanel {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+
+    .subpanel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+    .subpanel-head h3 { margin: 0; }
+
+    .field { min-width: 0; }
+    .field label, .field-label { display: block; margin-bottom: 6px; color: #475467; font-size: 12px; font-weight: 650; }
+    .field-hint { margin-top: 5px; color: #7b8494; font-size: 11px; }
+
+    input[type="text"], input[type="number"], input[type="datetime-local"], select, textarea {
+      width: 100%;
+      min-height: 38px;
+      padding: 7px 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      outline: none;
+      color: var(--text);
+      background: #fff;
+      transition: .15s ease;
+    }
+
+    textarea { min-height: 82px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: #7aa2ff; box-shadow: 0 0 0 3px rgba(37, 99, 235, .11); }
+    input:disabled, select:disabled { color: #98a2b3; background: #f2f4f7; }
+    input.invalid, select.invalid { border-color: var(--danger); background: #fff8f7; }
+
+    .input-unit { position: relative; }
+    .input-unit input { padding-right: 34px; }
+    .input-unit span { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: #8a94a5; font-size: 12px; pointer-events: none; }
+
+    .switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .switch input { position: absolute; opacity: 0; pointer-events: none; }
+    .switch-track { position: relative; width: 36px; height: 20px; border-radius: 999px; background: #cfd6e0; transition: .18s ease; }
+    .switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(16, 24, 40, .25); transition: .18s ease; }
+    .switch input:checked + .switch-track { background: var(--primary); }
+    .switch input:checked + .switch-track::after { transform: translateX(16px); }
+    .switch input:focus-visible + .switch-track { box-shadow: 0 0 0 3px rgba(37, 99, 235, .2); }
+
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th { color: #667085; background: #fafbfc; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #fcfdff; }
+    td .field-hint { margin: 2px 0 0; }
+    .table-input { min-width: 76px; max-width: 112px; }
+    .table-input.wide { min-width: 116px; max-width: 154px; }
+    .table-input input, .table-input select { min-height: 34px; padding: 5px 8px; }
+    .range-cell { min-width: 150px; }
+    .range-inputs { display: grid; grid-template-columns: minmax(62px, 1fr) 12px minmax(62px, 1fr); align-items: center; gap: 5px; }
+    .range-inputs span { color: #98a2b3; text-align: center; }
+
+    .type-cell strong, .quality-cell strong { display: block; color: var(--text); }
+    .type-cell small, .quality-cell small { display: block; color: var(--muted); }
+
+    .probability-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 16px; align-items: start; }
+    .probability-preview { position: sticky; top: 88px; }
+    .probability-value { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .probability-value strong { font-size: 21px; }
+    .distribution { display: flex; width: 100%; height: 18px; overflow: hidden; border-radius: 999px; background: #eaecf0; }
+    .distribution > span { min-width: 0; transition: width .2s ease; }
+    .seg-reply { background: #4f7cff; }
+    .seg-share { background: #44a98c; }
+    .seg-opinion { background: #f2a93b; }
+    .seg-empty { background: #cbd2dc; }
+    .legend { display: grid; gap: 8px; margin-top: 14px; }
+    .legend-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #475467; font-size: 12px; }
+    .legend-label { display: flex; align-items: center; gap: 7px; }
+    .swatch { width: 9px; height: 9px; border-radius: 3px; }
+
+    .notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 11px 12px;
+      border: 1px solid #cad9ff;
+      border-radius: 9px;
+      color: #315592;
+      background: #f3f7ff;
+      font-size: 12px;
+    }
+
+    .notice.warning { border-color: #f2d7a4; color: #8a5a00; background: #fffaf0; }
+    .notice.error { border-color: #f1b4ae; color: #b42318; background: var(--danger-soft); }
+    .notice.success { border-color: #afe0c7; color: #147a52; background: var(--success-soft); }
+    .notice[hidden] { display: none; }
+
+    .quality-q0 { color: #667085; }
+    .quality-q1 { color: #315592; }
+    .quality-q2 { color: #147a52; }
+    .quality-q3 { color: #9b5500; }
+
+    .rule-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .rule-list li { position: relative; padding-left: 18px; color: #475467; }
+    .rule-list li::before { content: "✓"; position: absolute; left: 0; color: var(--success); font-weight: 800; }
+
+    .permission-name code { color: #344054; font-weight: 650; }
+    .comment-copy { min-width: 320px; max-width: 760px; color: #344054; }
+    .empty-row td { padding: 34px 18px; color: var(--muted); text-align: center; }
+
+    .form-footer {
+      position: fixed;
+      z-index: 18;
+      right: 24px;
+      bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px 10px 15px;
+      border: 1px solid #c9d7f5;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(16, 24, 40, .18);
+    }
+
+    .form-footer.show { display: flex; }
+    .form-footer span { color: #475467; font-size: 12px; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, .52);
+    }
+
+    .modal-backdrop.show { display: flex; }
+    .modal { width: min(520px, 100%); border-radius: 14px; background: #fff; box-shadow: 0 24px 70px rgba(15, 23, 42, .28); }
+    .modal-head, .modal-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 19px; }
+    .modal-head { border-bottom: 1px solid var(--line); }
+    .modal-head h3 { margin: 0; font-size: 17px; }
+    .modal-body { padding: 19px; }
+    .modal-foot { justify-content: flex-end; border-top: 1px solid var(--line); }
+
+    .toast {
+      position: fixed;
+      z-index: 120;
+      right: 24px;
+      top: 82px;
+      display: none;
+      align-items: center;
+      gap: 9px;
+      max-width: 360px;
+      padding: 11px 14px;
+      border: 1px solid #afe0c7;
+      border-radius: 9px;
+      color: #147a52;
+      background: #f0fff7;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show { display: flex; animation: toastIn .18s ease-out; }
+    @keyframes toastIn { from { transform: translateY(-5px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .validation-summary { margin-bottom: 16px; }
+    .validation-summary ul { margin: 7px 0 0; padding-left: 20px; }
+
+    @media (max-width: 1180px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .probability-layout { grid-template-columns: 1fr; }
+      .probability-preview { position: static; }
+    }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; padding: 14px; overflow: visible; }
+      .brand { padding-bottom: 12px; }
+      .nav-label { display: none; }
+      .nav-list { display: flex; overflow-x: auto; padding-bottom: 2px; }
+      .nav-item { flex: 0 0 auto; }
+      .topbar { top: 0; padding: 10px 16px; }
+      .content { padding: 22px 16px 88px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .crumb, .timezone-pill, .top-actions .btn:not(.primary) { display: none; }
+      .page-head { display: block; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .card-header, .card-body { padding: 14px; }
+      .form-footer { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
+    }
+
+    /* Embedded in the unified Vanso operations admin. */
+    body.embedded { background: transparent; }
+    body.embedded .app { display: block; min-height: 100vh; }
+    body.embedded .sidebar { display: none; }
+    body.embedded .workspace { min-height: 100vh; }
+    body.embedded .topbar { min-height: 58px; height: 58px; padding: 8px 18px; justify-content: flex-end; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px; }
+    body.embedded .topbar .crumb { display: none; }
+    body.embedded .content { max-width: none; padding: 0 0 92px; }
+    body.embedded.embedded-library .topbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">V</div>
+        <div class="brand-copy"><strong>Vanso</strong><span>运营配置中心</span></div>
+      </div>
+      <div class="nav-label">AI机器人配置</div>
+      <nav class="nav-list" aria-label="页面模块">
+        <a class="nav-item active" href="#general-config" data-page="general"><span class="nav-icon">通</span><span>通用配置</span></a>
+        <a class="nav-item" href="#comment-library" data-page="library"><span class="nav-icon">库</span><span>机器人评论库</span></a>
+      </nav>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="crumb">AI机器人配置 / <strong id="currentPageName">通用配置</strong></div>
+        <div class="top-actions">
+          <span class="status-pill general-only" id="headerStatus"><span class="dot"></span>草稿</span>
+          <span class="timezone-pill">UTC+8</span>
+          <button class="btn general-only" type="button" data-action="reset">恢复默认</button>
+          <button class="btn general-only" type="button" data-action="save">保存草稿</button>
+          <button class="btn primary general-only" type="button" data-action="publish">发布配置</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section page-panel" id="overview" data-page-panel="general">
+          <div class="page-head">
+            <div>
+              <h1>AI机器人通用配置</h1>
+              <p class="lead">集中配置真人评论引导、轻互动、爬取内容分层回填及机器人账号权限。</p>
+            </div>
+            <span class="mini-pill gray">PRD v1.5 基础值</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card"><span>评论引导默认覆盖</span><strong id="summaryGuide">26%</strong><small>其余 74% 保持一期策略</small></div>
+            <div class="summary-card"><span>爬取质量层级</span><strong>Q0–Q3</strong><small>来源点赞缺失时按比例随机</small></div>
+            <div class="summary-card"><span>渐进回填阶段</span><strong>4 个阶段</strong><small>最终阶段累计完成 100%</small></div>
+            <div class="summary-card"><span>每日总额度</span><strong id="summaryDaily">45 次</strong><small>按单账号、UTC+8 自然日</small></div>
+          </div>
+
+        </section>
+
+        <form id="configForm" novalidate>
+          <section class="section page-panel" id="comment-guide" data-page-panel="general">
+            <div class="section-head">
+              <div><h2>评论引导配置</h2><p>只作用于一期已经创建的真人作品评论任务，不增加评论数量或新的适用条件。</p></div>
+              <label class="switch"><input type="checkbox" id="guideEnabled" checked><span class="switch-track"></span><span>启用评论引导</span></label>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>互斥抽样与留空策略</h3>
+                <div class="field" style="min-width: 210px;">
+                  <label for="blankMode">留空比例方式</label>
+                  <select id="blankMode">
+                    <option value="auto" selected>自动补足至 100%</option>
+                    <option value="manual">手动配置留空比例</option>
+                  </select>
+                </div>
+              </div>
+              <div class="card-body probability-layout">
+                <div>
+                  <div class="table-wrap">
+                    <table aria-label="评论引导类型配置">
+                      <thead><tr><th>启用</th><th>评论类型</th><th>抽取比例</th><th>单曲上限</th></tr></thead>
+                      <tbody>
+                        <tr>
+                          <td><label class="switch"><input type="checkbox" class="guide-type-toggle" data-target="ratioReply" checked><span class="switch-track"></span></label></td>
+                          <td class="type-cell"><strong>引导回复型</strong><small>在一期内容上增加轻问题</small></td>
+                          <td><div class="table-input input-unit"><input id="ratioReply" class="guide-ratio" type="number" min="0" max="100" step="1" value="10"><span>%</span></div></td>
+                          <td><div class="table-input input-unit"><input id="capReply" type="number" min="1" max="10" step="1" value="1"><span>条</span></div></td>
+                        </tr>
+                        <tr>
+                          <td><label class="switch"><input type="checkbox" class="guide-type-toggle" data-target="ratioShare" checked><span class="switch-track"></span></label></td>
+                          <td class="type-cell"><strong>引导分享型</strong><small>鼓励分享歌词或创作故事</small></td>
+                          <td><div class="table-input input-unit"><input id="ratioShare" class="guide-ratio" type="number" min="0" max="100" step="1" value="8"><span>%</span></div></td>
+                          <td><div class="table-input input-unit"><input id="capShare" type="number" min="1" max="10" step="1" value="1"><span>条</span></div></td>
+                        </tr>
+                        <tr>
+                          <td><label class="switch"><input type="checkbox" class="guide-type-toggle" data-target="ratioOpinion" checked><span class="switch-track"></span></label></td>
+                          <td class="type-cell"><strong>观点互动型</strong><small>增加氛围、风格或听感观点</small></td>
+                          <td><div class="table-input input-unit"><input id="ratioOpinion" class="guide-ratio" type="number" min="0" max="100" step="1" value="8"><span>%</span></div></td>
+                          <td><div class="table-input input-unit"><input id="capOpinion" type="number" min="1" max="10" step="1" value="1"><span>条</span></div></td>
+                        </tr>
+                        <tr>
+                          <td><span class="mini-pill gray">字段为空</span></td>
+                          <td class="type-cell"><strong>留空</strong><small>comment_type = null</small></td>
+                          <td><div class="table-input input-unit"><input id="ratioBlank" type="number" min="0" max="100" step="1" value="74" disabled><span>%</span></div></td>
+                          <td>—</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="notice" id="guideRuleNote"><span>i</span><span>四种结果采用一次互斥抽样；类型名称固定。配置变更仅影响新任务。</span></div>
+                  <div class="notice error" id="guideError" hidden><span>!</span><span></span></div>
+                </div>
+
+                <aside class="subpanel probability-preview" aria-label="评论引导比例预览">
+                  <div class="probability-value"><div><span class="field-label">当前比例合计</span><strong id="guideTotal">100%</strong></div><span class="mini-pill green" id="guideState">校验通过</span></div>
+                  <div class="distribution" aria-label="评论引导抽样比例分布">
+                    <span class="seg-reply" id="barReply" style="width: 10%"></span>
+                    <span class="seg-share" id="barShare" style="width: 8%"></span>
+                    <span class="seg-opinion" id="barOpinion" style="width: 8%"></span>
+                    <span class="seg-empty" id="barBlank" style="width: 74%"></span>
+                  </div>
+                  <div class="legend">
+                    <div class="legend-row"><span class="legend-label"><span class="swatch seg-reply"></span>引导回复型</span><strong id="legendReply">10%</strong></div>
+                    <div class="legend-row"><span class="legend-label"><span class="swatch seg-share"></span>引导分享型</span><strong id="legendShare">8%</strong></div>
+                    <div class="legend-row"><span class="legend-label"><span class="swatch seg-opinion"></span>观点互动型</span><strong id="legendOpinion">8%</strong></div>
+                    <div class="legend-row"><span class="legend-label"><span class="swatch seg-empty"></span>留空</span><strong id="legendBlank">74%</strong></div>
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </section>
+
+          <section class="section page-panel" id="human-interaction" data-page-panel="general">
+            <div class="section-head">
+              <div><h2>真人内容轻互动</h2><p>收藏按作品入库后 7 天内的播放里程碑抽样；关注按创作者累计真人数据抽样。</p></div>
+              <span class="mini-pill">只读取真人自然数据</span>
+            </div>
+            <div class="grid-2">
+              <div class="card full-span">
+                <div class="card-header">
+                  <h3>真人作品收藏</h3>
+                  <div class="top-actions"><button class="btn" type="button" id="addFavoriteMilestone">＋ 添加里程碑</button><label class="switch"><input type="checkbox" id="favoriteEnabled" checked><span class="switch-track"></span><span>启用</span></label></div>
+                </div>
+                <div class="card-body">
+                  <div class="grid-2">
+                    <div class="field"><label for="favoriteRate">统一抽样概率</label><div class="input-unit"><input id="favoriteRate" type="number" min="0" max="100" step="1" value="8"><span>%</span></div><div class="field-hint">每个首次达到的里程碑均使用该概率抽样一次</div></div>
+                    <div class="subpanel"><span class="field-label">固定观察窗口</span><strong style="display:block; margin-top:6px; font-size:18px;">入库后 7 天</strong><div class="field-hint">命中后由不同机器人立即收藏</div></div>
+                  </div>
+                  <div class="table-wrap" style="margin-top: 16px;">
+                    <table aria-label="真人作品收藏播放里程碑">
+                      <thead><tr><th>里程碑</th><th>累计真人自然播放量</th><th>操作</th></tr></thead>
+                      <tbody id="favoriteMilestoneBody">
+                        <tr><td><strong>里程碑 1</strong></td><td><div class="table-input wide input-unit"><input class="favorite-milestone" type="number" min="1" step="1" value="100"><span>次</span></div></td><td><button class="btn danger delete-milestone" type="button">删除</button></td></tr>
+                        <tr><td><strong>里程碑 2</strong></td><td><div class="table-input wide input-unit"><input class="favorite-milestone" type="number" min="1" step="1" value="300"><span>次</span></div></td><td><button class="btn danger delete-milestone" type="button">删除</button></td></tr>
+                        <tr><td><strong>里程碑 3</strong></td><td><div class="table-input wide input-unit"><input class="favorite-milestone" type="number" min="1" step="1" value="500"><span>次</span></div></td><td><button class="btn danger delete-milestone" type="button">删除</button></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="notice error" id="favoriteError" hidden><span>!</span><span></span></div>
+                </div>
+              </div>
+
+              <div class="card full-span">
+                <div class="card-header">
+                  <h3>关注真人创作者</h3>
+                  <div class="top-actions"><button class="btn" type="button" id="addFollowMilestone">＋ 添加关注级别</button><label class="switch"><input type="checkbox" id="followEnabled" checked><span class="switch-track"></span><span>启用</span></label></div>
+                </div>
+                <div class="card-body">
+                  <div class="subpanel"><span class="field-label">固定执行规则</span><strong style="display:block; margin-top:6px; font-size:16px;">每个关注级别独立抽样一次</strong><div class="field-hint">两项累计门槛同时达标时按本级概率抽样；一次跨过多个级别时分别抽样，命中后由不同机器人立即关注</div></div>
+                  <div class="table-wrap" style="margin-top: 16px;">
+                    <table aria-label="关注真人创作者里程碑配置">
+                      <thead><tr><th>关注级别</th><th>累计真人播放量</th><th>累计真人互动量</th><th>抽样概率</th><th>操作</th></tr></thead>
+                      <tbody id="followMilestoneBody">
+                        <tr data-milestone-id="follow-level-1"><td><strong>级别 1</strong></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-play" type="number" min="1" step="1" value="500"><span>次</span></div></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-human" type="number" min="1" step="1" value="3"><span>次</span></div></td><td><div class="table-input input-unit"><input class="follow-milestone follow-rate" type="number" min="0" max="100" step="1" value="3"><span>%</span></div></td><td><button class="btn danger delete-follow-milestone" type="button">删除</button></td></tr>
+                        <tr data-milestone-id="follow-level-2"><td><strong>级别 2</strong></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-play" type="number" min="1" step="1" value="1500"><span>次</span></div></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-human" type="number" min="1" step="1" value="10"><span>次</span></div></td><td><div class="table-input input-unit"><input class="follow-milestone follow-rate" type="number" min="0" max="100" step="1" value="5"><span>%</span></div></td><td><button class="btn danger delete-follow-milestone" type="button">删除</button></td></tr>
+                        <tr data-milestone-id="follow-level-3"><td><strong>级别 3</strong></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-play" type="number" min="1" step="1" value="5000"><span>次</span></div></td><td><div class="table-input wide input-unit"><input class="follow-milestone follow-human" type="number" min="1" step="1" value="30"><span>次</span></div></td><td><div class="table-input input-unit"><input class="follow-milestone follow-rate" type="number" min="0" max="100" step="1" value="8"><span>%</span></div></td><td><button class="btn danger delete-follow-milestone" type="button">删除</button></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="notice" style="margin-top: 12px;"><span>i</span><span>关注不限制单曲入库时间。新增级别在创作者下一次产生合格真人数据时判断；删除级别不影响历史记录和既有关注关系。</span></div>
+                  <div class="notice error" id="followError" hidden><span>!</span><span></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="notice warning"><span>!</span><span><strong>固定边界：</strong>收藏与关注独立抽样。机器人数据、人工补量、异常流量、爬取历史基数以及真人定向机器人互动均不得触发；本期不创建文字回复、回复点赞或互动驱动关注任务。</span></div>
+          </section>
+
+          <section class="section page-panel" id="quality" data-page-panel="general">
+            <div class="section-head">
+              <div><h2>爬取内容质量分层与目标</h2><p>全部抓取来源统一处理，以来源平台点赞数确定质量层级；目标值在歌曲首次处理时生成并锁定。</p></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>质量分层阈值</h3><span class="mini-pill gray">单位：来源点赞数</span></div>
+              <div class="card-body">
+                <div class="table-wrap">
+                  <table aria-label="爬取内容质量分层阈值">
+                    <thead><tr><th>质量层级</th><th>内容定位</th><th>最小点赞数</th><th>最大点赞数</th><th>说明</th></tr></thead>
+                    <tbody>
+                      <tr><td class="quality-cell quality-q0"><strong>Q0 长尾</strong><small>Long tail</small></td><td>保留自然冷清感</td><td><div class="table-input"><input class="threshold-min" data-q="0" type="number" min="0" value="0"></div></td><td><div class="table-input"><input class="threshold-max" data-q="0" type="number" min="0" value="49"></div></td><td>低互动目标</td></tr>
+                      <tr><td class="quality-cell quality-q1"><strong>Q1 普通</strong><small>Normal</small></td><td>具备基础社区互动</td><td><div class="table-input"><input class="threshold-min" data-q="1" type="number" min="0" value="50"></div></td><td><div class="table-input"><input class="threshold-max" data-q="1" type="number" min="0" value="199"></div></td><td>基础繁荣度</td></tr>
+                      <tr><td class="quality-cell quality-q2"><strong>Q2 优质</strong><small>Quality</small></td><td>有明显用户认可</td><td><div class="table-input"><input class="threshold-min" data-q="2" type="number" min="0" value="200"></div></td><td><div class="table-input"><input class="threshold-max" data-q="2" type="number" min="0" value="999"></div></td><td>较高互动目标</td></tr>
+                      <tr><td class="quality-cell quality-q3"><strong>Q3 高热</strong><small>High heat</small></td><td>社区高热作品</td><td><div class="table-input"><input class="threshold-min" data-q="3" type="number" min="0" value="1000"></div></td><td><div class="table-input"><input type="text" value="无上限" disabled></div></td><td>最高互动目标</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>来源点赞数缺失或异常</h3><span class="mini-pill">随机结果锁定</span></div>
+              <div class="card-body">
+                <div class="grid-3">
+                  <div class="field"><label for="missingQ0">随机进入 Q0</label><div class="input-unit"><input id="missingQ0" type="number" min="0" max="100" value="70"><span>%</span></div></div>
+                  <div class="field"><label for="missingQ1">随机进入 Q1</label><div class="input-unit"><input id="missingQ1" type="number" min="0" max="100" value="30"><span>%</span></div></div>
+                  <div class="subpanel"><span class="field-label">比例合计</span><strong id="missingTotal" style="font-size: 20px;">100%</strong><div class="field-hint" id="missingHint">只在来源点赞数缺失、为负或无法解析时使用</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>各层级播放与互动目标</h3><span class="mini-pill gray">目标区间独立配置</span></div>
+              <div class="card-body" style="padding: 0;">
+                <div class="table-wrap">
+                  <table aria-label="各质量层级目标值配置" id="targetTable">
+                    <thead><tr><th>层级</th><th>播放目标</th><th>点赞目标</th><th>收藏目标</th><th>分享目标</th><th>评论目标</th></tr></thead>
+                    <tbody>
+                      <tr data-level="Q0"><td class="quality-cell quality-q0"><strong>Q0 长尾</strong><small>0–49 赞</small></td><td class="range-cell" data-metric="play"><div class="range-inputs"><input class="range-min" type="number" min="0" value="50"><span>–</span><input class="range-max" type="number" min="0" value="300"></div></td><td class="range-cell" data-metric="like"><div class="range-inputs"><input class="range-min" type="number" min="0" value="0"><span>–</span><input class="range-max" type="number" min="0" value="5"></div></td><td class="range-cell" data-metric="favorite"><div class="range-inputs"><input class="range-min" type="number" min="0" value="0"><span>–</span><input class="range-max" type="number" min="0" value="0"></div></td><td class="range-cell" data-metric="share"><div class="range-inputs"><input class="range-min" type="number" min="0" value="0"><span>–</span><input class="range-max" type="number" min="0" value="0"></div></td><td class="range-cell" data-metric="comment"><div class="range-inputs"><input class="range-min" type="number" min="0" value="0"><span>–</span><input class="range-max" type="number" min="0" value="0"></div></td></tr>
+                      <tr data-level="Q1"><td class="quality-cell quality-q1"><strong>Q1 普通</strong><small>50–199 赞</small></td><td class="range-cell" data-metric="play"><div class="range-inputs"><input class="range-min" type="number" min="0" value="500"><span>–</span><input class="range-max" type="number" min="0" value="2000"></div></td><td class="range-cell" data-metric="like"><div class="range-inputs"><input class="range-min" type="number" min="0" value="20"><span>–</span><input class="range-max" type="number" min="0" value="60"></div></td><td class="range-cell" data-metric="favorite"><div class="range-inputs"><input class="range-min" type="number" min="0" value="2"><span>–</span><input class="range-max" type="number" min="0" value="8"></div></td><td class="range-cell" data-metric="share"><div class="range-inputs"><input class="range-min" type="number" min="0" value="0"><span>–</span><input class="range-max" type="number" min="0" value="3"></div></td><td class="range-cell" data-metric="comment"><div class="range-inputs"><input class="range-min" type="number" min="0" value="1"><span>–</span><input class="range-max" type="number" min="0" value="3"></div></td></tr>
+                      <tr data-level="Q2"><td class="quality-cell quality-q2"><strong>Q2 优质</strong><small>200–999 赞</small></td><td class="range-cell" data-metric="play"><div class="range-inputs"><input class="range-min" type="number" min="0" value="3000"><span>–</span><input class="range-max" type="number" min="0" value="15000"></div></td><td class="range-cell" data-metric="like"><div class="range-inputs"><input class="range-min" type="number" min="0" value="80"><span>–</span><input class="range-max" type="number" min="0" value="250"></div></td><td class="range-cell" data-metric="favorite"><div class="range-inputs"><input class="range-min" type="number" min="0" value="10"><span>–</span><input class="range-max" type="number" min="0" value="40"></div></td><td class="range-cell" data-metric="share"><div class="range-inputs"><input class="range-min" type="number" min="0" value="3"><span>–</span><input class="range-max" type="number" min="0" value="15"></div></td><td class="range-cell" data-metric="comment"><div class="range-inputs"><input class="range-min" type="number" min="0" value="4"><span>–</span><input class="range-max" type="number" min="0" value="8"></div></td></tr>
+                      <tr data-level="Q3"><td class="quality-cell quality-q3"><strong>Q3 高热</strong><small>≥ 1000 赞</small></td><td class="range-cell" data-metric="play"><div class="range-inputs"><input class="range-min" type="number" min="0" value="20000"><span>–</span><input class="range-max" type="number" min="0" value="100000"></div></td><td class="range-cell" data-metric="like"><div class="range-inputs"><input class="range-min" type="number" min="0" value="300"><span>–</span><input class="range-max" type="number" min="0" value="1000"></div></td><td class="range-cell" data-metric="favorite"><div class="range-inputs"><input class="range-min" type="number" min="0" value="40"><span>–</span><input class="range-max" type="number" min="0" value="150"></div></td><td class="range-cell" data-metric="share"><div class="range-inputs"><input class="range-min" type="number" min="0" value="15"><span>–</span><input class="range-max" type="number" min="0" value="60"></div></td><td class="range-cell" data-metric="comment"><div class="range-inputs"><input class="range-min" type="number" min="0" value="8"><span>–</span><input class="range-max" type="number" min="0" value="15"></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="notice error" id="targetError" style="margin: 14px 18px 18px;" hidden><span>!</span><span></span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section page-panel" id="refill" data-page-panel="general">
+            <div class="section-head">
+              <div><h2>七天渐进回填</h2><p>以歌曲入库时间 T0 为起点，按阶段结束时的累计完成比例逐步回填至目标值。</p></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>回填阶段配置</h3><span class="mini-pill">第四阶段必须为 100%</span></div>
+              <div class="card-body" style="padding: 0;">
+                <div class="table-wrap">
+                  <table aria-label="渐进回填阶段配置" id="stageTable">
+                    <thead><tr><th>回填阶段</th><th>相对入库时间</th><th>阶段结束时累计完成比例</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>第一阶段</strong></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-start" type="number" min="0" value="0"><span>h</span></div><span>–</span><div class="table-input input-unit"><input class="stage-end" type="number" min="1" value="24"><span>h</span></div></div></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-min" type="number" min="0" max="100" value="10"><span>%</span></div><span>–</span><div class="table-input input-unit"><input class="stage-max" type="number" min="0" max="100" value="20"><span>%</span></div></div></td>
+                      </tr>
+                      <tr>
+                        <td><strong>第二阶段</strong></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-start" type="number" min="0" value="24"><span>h</span></div><span>–</span><div class="table-input input-unit"><input class="stage-end" type="number" min="1" value="72"><span>h</span></div></div></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-min" type="number" min="0" max="100" value="35"><span>%</span></div><span>–</span><div class="table-input input-unit"><input class="stage-max" type="number" min="0" max="100" value="50"><span>%</span></div></div></td>
+                      </tr>
+                      <tr>
+                        <td><strong>第三阶段</strong></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-start" type="number" min="0" value="72"><span>h</span></div><span>–</span><div class="table-input input-unit"><input class="stage-end" type="number" min="1" value="120"><span>h</span></div></div></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-min" type="number" min="0" max="100" value="65"><span>%</span></div><span>–</span><div class="table-input input-unit"><input class="stage-max" type="number" min="0" max="100" value="80"><span>%</span></div></div></td>
+                      </tr>
+                      <tr>
+                        <td><strong>第四阶段</strong></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-start" type="number" min="0" value="120"><span>h</span></div><span>–</span><div class="table-input input-unit"><input class="stage-end" type="number" min="1" value="168"><span>h</span></div></div></td>
+                        <td><div class="range-inputs"><div class="table-input input-unit"><input class="stage-min" type="number" min="0" max="100" value="100"><span>%</span></div><span>–</span><div class="table-input input-unit"><input class="stage-max" type="number" min="0" max="100" value="100"><span>%</span></div></div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="notice error" id="stageError" style="margin: 14px 18px 18px;" hidden><span>!</span><span></span></div>
+              </div>
+            </div>
+
+            <div class="notice"><span>i</span><span><strong>执行顺序：</strong>每个阶段先执行播放回填；播放完成后，点赞、收藏、分享和评论不区分先后顺序，按阶段累计完成比例补齐。</span></div>
+          </section>
+
+          <section class="section page-panel page-hidden" id="comment-library" data-page-panel="library">
+            <div class="section-head">
+              <div><h2>机器人评论库</h2><p>上传前由运营完成文案审核；本页面仅提供上传、新增和删除，不配置审核或语言策略。</p></div>
+              <div class="top-actions">
+                <input id="commentFile" type="file" accept=".csv,.xlsx" hidden>
+                <button class="btn" type="button" id="uploadComments">上传 CSV/XLSX</button>
+                <button class="btn primary" type="button" id="addComment">新增评论</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>评论文案</h3>
+                <span class="mini-pill gray" id="commentLibraryCount">共 2 条</span>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <div class="table-wrap">
+                  <table aria-label="机器人评论库">
+                    <thead><tr><th>评论库 ID</th><th>评论内容</th><th>语言</th><th>更新时间（UTC+8）</th><th>操作</th></tr></thead>
+                    <tbody id="commentLibraryBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="notice"><span>i</span><span>CSV/XLSX 文件每行一条文案，必填字段为“评论内容、语言”；语言使用标准代码，例如 en、es、pt、fil、ms。</span></div>
+          </section>
+
+          <section class="section page-panel" id="permissions" data-page-panel="general">
+            <div class="section-head">
+              <div><h2>机器人权限与每日额度</h2><p>只有实际发布评论或执行真人作品互动时才消耗账号权限与额度。</p></div>
+              <span class="mini-pill gray">每日 00:00 重置 · UTC+8</span>
+            </div>
+
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-header"><h3>独立行为权限</h3></div>
+                <div class="card-body" style="padding: 0;">
+                  <table aria-label="机器人账号行为权限">
+                    <thead><tr><th>权限</th><th>本期用途</th><th>状态</th></tr></thead>
+                    <tbody>
+                      <tr><td class="permission-name"><code>Can_Comment</code></td><td>真人评论、爬取素材评论</td><td><label class="switch"><input type="checkbox" id="permComment" checked><span class="switch-track"></span><span>开启</span></label></td></tr>
+                      <tr><td class="permission-name"><code>Can_Like</code></td><td>一期、二期点赞行为统一控制</td><td><label class="switch"><input type="checkbox" id="permLike" checked><span class="switch-track"></span><span>开启</span></label></td></tr>
+                      <tr><td class="permission-name"><code>Can_Favorite</code></td><td>收藏符合条件的真人作品</td><td><label class="switch"><input type="checkbox" id="permFavorite" checked><span class="switch-track"></span><span>开启</span></label></td></tr>
+                      <tr><td class="permission-name"><code>Can_Follow</code></td><td>仅热度驱动关注真人创作者</td><td><label class="switch"><input type="checkbox" id="permFollow" checked><span class="switch-track"></span><span>开启</span></label></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><h3>单账号每日上限</h3><span class="mini-pill gray">任一上限先到即停止</span></div>
+                <div class="card-body" style="padding: 0;">
+                  <table aria-label="机器人单账号每日行为上限">
+                    <thead><tr><th>行为</th><th>默认上限</th><th>统计口径</th></tr></thead>
+                    <tbody>
+                      <tr><td>评论</td><td><div class="table-input input-unit"><input id="dailyComment" class="daily-cap" type="number" min="0" value="25"><span>条</span></div></td><td>成功发布</td></tr>
+                      <tr><td>点赞作品</td><td><div class="table-input input-unit"><input id="dailyLike" class="daily-cap" type="number" min="0" value="40"><span>次</span></div></td><td>沿用一期行为</td></tr>
+                      <tr><td>收藏作品</td><td><div class="table-input input-unit"><input id="dailyFavorite" class="daily-cap" type="number" min="0" value="10"><span>次</span></div></td><td>成功收藏</td></tr>
+                      <tr><td>关注创作者</td><td><div class="table-input input-unit"><input id="dailyFollow" class="daily-cap" type="number" min="0" value="3"><span>人</span></div></td><td>成功关注</td></tr>
+                      <tr><td><strong>全部行为合计</strong></td><td><div class="table-input input-unit"><input id="dailyTotal" type="number" min="0" value="45"><span>次</span></div></td><td>每日总上限</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="notice"><span>i</span><span>后台不提供“开启回复点赞”“开启互动驱动关注”或“手工重复补量”入口；爬取历史基数不消耗机器人账号额度。</span></div>
+          </section>
+
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <div class="form-footer" id="dirtyBar"><span>当前配置有未保存的修改</span><button class="btn primary" type="button" data-action="save">保存草稿</button></div>
+
+  <div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
+    <div class="modal">
+      <div class="modal-head"><h3 id="publishTitle">确认发布配置</h3><button class="btn ghost" type="button" data-action="close-modal" aria-label="关闭">关闭</button></div>
+      <div class="modal-body">
+        <div class="notice success" style="margin-top: 0;"><span>✓</span><span>配置校验已通过，可以发布。</span></div>
+        <p style="margin: 15px 0 0; color: #475467;">发布后按照平台通用配置生效逻辑处理；进行中的任务继续使用原配置快照。</p>
+      </div>
+      <div class="modal-foot"><button class="btn" type="button" data-action="close-modal">取消</button><button class="btn primary" type="button" id="confirmPublish">确认发布</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="addCommentModal" role="dialog" aria-modal="true" aria-labelledby="addCommentTitle">
+    <div class="modal">
+      <div class="modal-head"><h3 id="addCommentTitle">新增机器人评论</h3><button class="btn ghost" type="button" data-action="close-modal" aria-label="关闭">关闭</button></div>
+      <div class="modal-body">
+        <div class="grid-2">
+          <div class="field" style="grid-column: 1 / -1;"><label for="newCommentContent">评论内容</label><textarea id="newCommentContent" maxlength="500" placeholder="输入已完成审核的机器人评论文案"></textarea></div>
+          <div class="field"><label for="newCommentLanguage">语言</label><select id="newCommentLanguage"><option value="en">en · English</option><option value="es">es · Español</option><option value="pt">pt · Português</option><option value="fil">fil · Filipino</option><option value="ms">ms · Bahasa Melayu</option></select></div>
+          <div class="field"><span class="field-label">入库规则</span><div class="field-hint" style="margin-top: 10px;">评论内容和语言均为必填；保存后直接进入评论库。</div></div>
+        </div>
+        <div class="notice error" id="newCommentError" hidden><span>!</span><span></span></div>
+      </div>
+      <div class="modal-foot"><button class="btn" type="button" data-action="close-modal">取消</button><button class="btn primary" type="button" id="confirmAddComment">确认新增</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="validationModal" role="dialog" aria-modal="true" aria-labelledby="validationTitle">
+    <div class="modal">
+      <div class="modal-head"><h3 id="validationTitle">配置暂时无法发布</h3><button class="btn ghost" type="button" data-action="close-modal">关闭</button></div>
+      <div class="modal-body validation-summary">
+        <div class="notice error" style="margin-top: 0;"><span>!</span><span>请先修正以下配置问题：</span></div>
+        <ul id="validationList"></ul>
+      </div>
+      <div class="modal-foot"><button class="btn primary" type="button" data-action="close-modal">返回修改</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span>✓</span><span id="toastText">草稿已保存</span></div>
+
+  <script>
+    (function () {
+      var embedded = new URLSearchParams(window.location.search).get('embed') === '1';
+      if (embedded) document.body.classList.add('embedded');
+      var form = document.getElementById('configForm');
+      var dirtyBar = document.getElementById('dirtyBar');
+      var storageKey = 'vansoRobotConfigPrototypeV20';
+      var commentLibraryKey = 'vansoRobotCommentLibraryV1';
+      var commentLibrary = loadCommentLibrary();
+      var initialSnapshot = serializeForm();
+      var hasSavedSnapshot = false;
+
+      function numberValue(id) {
+        var el = typeof id === 'string' ? document.getElementById(id) : id;
+        var value = Number(el.value);
+        return Number.isFinite(value) ? value : 0;
+      }
+
+      function getFavoriteMilestones() {
+        return Array.prototype.map.call(document.querySelectorAll('.favorite-milestone'), function (el) { return numberValue(el); });
+      }
+
+      function renderFavoriteMilestones(values) {
+        var milestones = values && values.length ? values : [100];
+        document.getElementById('favoriteMilestoneBody').innerHTML = milestones.map(function (value, index) {
+          return '<tr>' +
+            '<td><strong>里程碑 ' + (index + 1) + '</strong></td>' +
+            '<td><div class="table-input wide input-unit"><input class="favorite-milestone" type="number" min="1" step="1" value="' + Number(value || 0) + '"><span>次</span></div></td>' +
+            '<td><button class="btn danger delete-milestone" type="button">删除</button></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      function makeFollowMilestoneId() {
+        return 'follow-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      }
+
+      function getFollowMilestones() {
+        return Array.prototype.map.call(document.querySelectorAll('#followMilestoneBody tr'), function (row) {
+          if (!row.dataset.milestoneId) row.dataset.milestoneId = makeFollowMilestoneId();
+          return {
+            id: row.dataset.milestoneId,
+            play: numberValue(row.querySelector('.follow-play')),
+            interaction: numberValue(row.querySelector('.follow-human')),
+            rate: numberValue(row.querySelector('.follow-rate'))
+          };
+        });
+      }
+
+      function renderFollowMilestones(values) {
+        var milestones = values && values.length ? values : [{ id: makeFollowMilestoneId(), play: 500, interaction: 3, rate: 3 }];
+        document.getElementById('followMilestoneBody').innerHTML = milestones.map(function (item, index) {
+          var milestoneId = item.id || makeFollowMilestoneId();
+          return '<tr data-milestone-id="' + escapeHtml(milestoneId) + '">' +
+            '<td><strong>级别 ' + (index + 1) + '</strong></td>' +
+            '<td><div class="table-input wide input-unit"><input class="follow-milestone follow-play" type="number" min="1" step="1" value="' + Number(item.play || 0) + '"><span>次</span></div></td>' +
+            '<td><div class="table-input wide input-unit"><input class="follow-milestone follow-human" type="number" min="1" step="1" value="' + Number(item.interaction || 0) + '"><span>次</span></div></td>' +
+            '<td><div class="table-input input-unit"><input class="follow-milestone follow-rate" type="number" min="0" max="100" step="1" value="' + Number(item.rate || 0) + '"><span>%</span></div></td>' +
+            '<td><button class="btn danger delete-follow-milestone" type="button">删除</button></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      function serializableControls() {
+        return Array.prototype.filter.call(
+          document.querySelectorAll('#configForm input:not([type="file"]), #configForm select, #configForm textarea'),
+          function (el) { return !el.classList.contains('favorite-milestone') && !el.classList.contains('follow-milestone'); }
+        );
+      }
+
+      function serializeForm() {
+        var data = { controls: {}, favoriteMilestones: getFavoriteMilestones(), followMilestones: getFollowMilestones() };
+        serializableControls().forEach(function (el, index) {
+          var key = el.id ? 'id:' + el.id : 'index:' + index;
+          data.controls[key] = el.type === 'checkbox' ? el.checked : el.value;
+        });
+        return JSON.stringify(data);
+      }
+
+      function restoreForm(serialized) {
+        if (!serialized) return;
+        var data;
+        try { data = JSON.parse(serialized); } catch (error) { return; }
+        var controls = data.controls || data;
+        if (Array.isArray(data.favoriteMilestones)) renderFavoriteMilestones(data.favoriteMilestones);
+        if (Array.isArray(data.followMilestones)) renderFollowMilestones(data.followMilestones);
+        serializableControls().forEach(function (el, index) {
+          var key = el.id ? 'id:' + el.id : 'index:' + index;
+          var legacyKey = el.id;
+          var value = Object.prototype.hasOwnProperty.call(controls, key) ? controls[key] : controls[legacyKey];
+          if (typeof value === 'undefined') return;
+          if (el.type === 'checkbox') el.checked = Boolean(value);
+          else el.value = value;
+        });
+      }
+
+      function loadCommentLibrary() {
+        var savedComments = localStorage.getItem(commentLibraryKey);
+        if (savedComments) {
+          try {
+            return JSON.parse(savedComments).map(function (item) {
+              return { id: item.id, content: item.content, language: item.language || 'en', updatedAt: item.updatedAt };
+            });
+          } catch (error) { /* 使用示例数据 */ }
+        }
+        return [
+          { id: 'RC-0001', content: 'love the vibe on this one', language: 'en', updatedAt: '2026-08-04 10:20' },
+          { id: 'RC-0002', content: 'this has such a smooth feel', language: 'en', updatedAt: '2026-08-04 10:24' }
+        ];
+      }
+
+      function saveCommentLibrary() {
+        localStorage.setItem(commentLibraryKey, JSON.stringify(commentLibrary));
+      }
+
+      function formatUtc8Now() {
+        var now = new Date(Date.now() + 8 * 60 * 60 * 1000);
+        return now.toISOString().slice(0, 16).replace('T', ' ');
+      }
+
+      function nextCommentId() {
+        var maxId = commentLibrary.reduce(function (max, item) {
+          var value = Number(String(item.id).replace(/\D/g, '')) || 0;
+          return Math.max(max, value);
+        }, 0);
+        return 'RC-' + String(maxId + 1).padStart(4, '0');
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
+        });
+      }
+
+      function languageLabel(code) {
+        var languageNames = { en: 'English', es: 'Español', pt: 'Português', fil: 'Filipino', ms: 'Bahasa Melayu' };
+        var normalized = String(code || '').trim().toLowerCase();
+        return normalized + (languageNames[normalized] ? ' · ' + languageNames[normalized] : '');
+      }
+
+      function renderCommentLibrary() {
+        var tbody = document.getElementById('commentLibraryBody');
+        document.getElementById('commentLibraryCount').textContent = '共 ' + commentLibrary.length + ' 条';
+        if (!commentLibrary.length) {
+          tbody.innerHTML = '<tr class="empty-row"><td colspan="5">评论库暂无文案，请上传文件或手动新增</td></tr>';
+          return;
+        }
+        tbody.innerHTML = commentLibrary.map(function (item) {
+          return '<tr data-comment-id="' + escapeHtml(item.id) + '">' +
+            '<td><code>' + escapeHtml(item.id) + '</code></td>' +
+            '<td class="comment-copy">' + escapeHtml(item.content) + '</td>' +
+            '<td><span class="mini-pill gray">' + escapeHtml(languageLabel(item.language)) + '</span></td>' +
+            '<td class="text-nowrap">' + escapeHtml(item.updatedAt) + '</td>' +
+            '<td><button class="btn danger delete-comment" type="button" data-comment-id="' + escapeHtml(item.id) + '">删除</button></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      function addComments(entries) {
+        var existing = new Set(commentLibrary.map(function (item) { return item.content.trim() + '\u0000' + String(item.language || '').toLowerCase(); }));
+        var added = 0;
+        var skipped = 0;
+        entries.forEach(function (entry) {
+          var content = String(entry && entry.content || '').trim();
+          var language = String(entry && entry.language || '').trim().toLowerCase();
+          var uniqueKey = content + '\u0000' + language;
+          if (!content || !language || existing.has(uniqueKey)) { skipped += 1; return; }
+          commentLibrary.push({ id: nextCommentId(), content: content, language: language, updatedAt: formatUtc8Now() });
+          existing.add(uniqueKey);
+          added += 1;
+        });
+        if (added) saveCommentLibrary();
+        renderCommentLibrary();
+        return { added: added, skipped: skipped };
+      }
+
+      function parseCsvRow(line) {
+        var cells = [];
+        var value = '';
+        var quoted = false;
+        for (var i = 0; i < line.length; i += 1) {
+          var char = line[i];
+          if (char === '"' && quoted && line[i + 1] === '"') { value += '"'; i += 1; }
+          else if (char === '"') quoted = !quoted;
+          else if (char === ',' && !quoted) { cells.push(value.trim()); value = ''; }
+          else value += char;
+        }
+        cells.push(value.trim());
+        return cells;
+      }
+
+      function importCsv(file) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          var lines = String(reader.result || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(function (line) { return line.trim(); });
+          if (!lines.length) { showToast('文件中没有可导入的评论内容'); return; }
+          var header = parseCsvRow(lines[0]);
+          var contentIndex = header.indexOf('评论内容');
+          var languageIndex = header.indexOf('语言');
+          if (contentIndex < 0 || languageIndex < 0) { showToast('上传文件必须包含“评论内容、语言”两列'); return; }
+          var entries = lines.slice(1).map(function (line) {
+            var cells = parseCsvRow(line);
+            return { content: cells[contentIndex] || '', language: cells[languageIndex] || '' };
+          });
+          var result = addComments(entries);
+          showToast('已新增 ' + result.added + ' 条，跳过 ' + result.skipped + ' 条');
+        };
+        reader.onerror = function () { showToast('文件读取失败，请重新选择'); };
+        reader.readAsText(file, 'UTF-8');
+      }
+
+      function markDirty() {
+        if (document.querySelector('.nav-item[data-page="library"].active')) {
+          dirtyBar.classList.remove('show');
+          return;
+        }
+        var baseline = hasSavedSnapshot ? localStorage.getItem(storageKey) : initialSnapshot;
+        dirtyBar.classList.toggle('show', serializeForm() !== baseline);
+      }
+
+      function showToast(message) {
+        var toast = document.getElementById('toast');
+        document.getElementById('toastText').textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(function () { toast.classList.remove('show'); }, 2600);
+      }
+
+      function setErrorBox(id, message) {
+        var box = document.getElementById(id);
+        box.hidden = !message;
+        if (message) box.querySelector('span:last-child').textContent = message;
+      }
+
+      function updateGuide() {
+        var enabled = document.getElementById('guideEnabled').checked;
+        var mode = document.getElementById('blankMode').value;
+        var values = { reply: 0, share: 0, opinion: 0, blank: 0 };
+
+        document.querySelectorAll('.guide-type-toggle').forEach(function (toggle) {
+          var target = document.getElementById(toggle.dataset.target);
+          target.disabled = !toggle.checked || !enabled;
+        });
+        document.getElementById('blankMode').disabled = !enabled;
+
+        values.reply = enabled && !document.getElementById('ratioReply').disabled ? numberValue('ratioReply') : 0;
+        values.share = enabled && !document.getElementById('ratioShare').disabled ? numberValue('ratioShare') : 0;
+        values.opinion = enabled && !document.getElementById('ratioOpinion').disabled ? numberValue('ratioOpinion') : 0;
+        var typedTotal = values.reply + values.share + values.opinion;
+        var blankInput = document.getElementById('ratioBlank');
+
+        if (!enabled) {
+          values.blank = 100;
+          blankInput.value = 100;
+          blankInput.disabled = true;
+        } else if (mode === 'auto') {
+          values.blank = Math.max(0, 100 - typedTotal);
+          blankInput.value = values.blank;
+          blankInput.disabled = true;
+        } else {
+          blankInput.disabled = false;
+          values.blank = numberValue('ratioBlank');
+        }
+
+        var total = values.reply + values.share + values.opinion + values.blank;
+        var error = '';
+        if (typedTotal > 100) error = '三种引导类型比例之和不能超过 100%。';
+        else if (mode === 'manual' && total !== 100) error = '手动配置时，三种引导类型与留空比例合计必须等于 100%。';
+
+        document.getElementById('guideTotal').textContent = total + '%';
+        document.getElementById('guideState').textContent = error ? '需要调整' : '校验通过';
+        document.getElementById('guideState').className = 'mini-pill ' + (error ? 'gray' : 'green');
+        document.getElementById('summaryGuide').textContent = typedTotal + '%';
+        ['Reply', 'Share', 'Opinion', 'Blank'].forEach(function (name) {
+          var key = name.toLowerCase();
+          document.getElementById('bar' + name).style.width = Math.max(0, values[key]) + '%';
+          document.getElementById('legend' + name).textContent = values[key] + '%';
+        });
+        setErrorBox('guideError', error);
+        return error;
+      }
+
+      function validateMissing() {
+        var total = numberValue('missingQ0') + numberValue('missingQ1');
+        document.getElementById('missingTotal').textContent = total + '%';
+        var ok = total === 100;
+        document.getElementById('missingTotal').style.color = ok ? '#16865a' : '#d92d20';
+        document.getElementById('missingHint').textContent = ok ? '只在来源点赞数缺失、为负或无法解析时使用' : 'Q0 与 Q1 随机比例合计必须等于 100%';
+        return ok ? '' : '点赞数缺失分层：Q0 与 Q1 比例合计必须等于 100%。';
+      }
+
+      function validateThresholds() {
+        var rows = [];
+        for (var i = 0; i < 4; i += 1) {
+          var minEl = document.querySelector('.threshold-min[data-q="' + i + '"]');
+          var maxEl = document.querySelector('.threshold-max[data-q="' + i + '"]');
+          rows.push({ min: numberValue(minEl), max: maxEl ? numberValue(maxEl) : Infinity, minEl: minEl, maxEl: maxEl });
+        }
+        var error = '';
+        rows.forEach(function (row, index) {
+          row.minEl.classList.remove('invalid');
+          if (row.maxEl) row.maxEl.classList.remove('invalid');
+          if (row.min > row.max) {
+            row.minEl.classList.add('invalid');
+            if (row.maxEl) row.maxEl.classList.add('invalid');
+            error = '质量分层阈值的最小值不能大于最大值。';
+          }
+          if (index > 0 && row.min !== rows[index - 1].max + 1) {
+            row.minEl.classList.add('invalid');
+            error = 'Q0–Q3 阈值需要连续且不能重叠。';
+          }
+        });
+        return error;
+      }
+
+      function validateTargets() {
+        var errors = [];
+        document.querySelectorAll('#targetTable tbody tr').forEach(function (row) {
+          var level = row.dataset.level;
+          var values = {};
+          row.querySelectorAll('[data-metric]').forEach(function (cell) {
+            var minEl = cell.querySelector('.range-min');
+            var maxEl = cell.querySelector('.range-max');
+            var min = numberValue(minEl);
+            var max = numberValue(maxEl);
+            minEl.classList.remove('invalid');
+            maxEl.classList.remove('invalid');
+            if (min > max) {
+              minEl.classList.add('invalid');
+              maxEl.classList.add('invalid');
+              errors.push(level + ' 的' + cell.dataset.metric + '目标最小值不能大于最大值');
+            }
+            values[cell.dataset.metric] = { min: min, max: max };
+          });
+          if (values.play.min < values.like.max) errors.push(level + ' 的播放目标下限不能低于点赞目标上限');
+          if (values.like.min < values.favorite.max) errors.push(level + ' 的点赞目标下限应不低于收藏目标上限');
+        });
+        var message = errors.length ? errors.slice(0, 3).join('；') + (errors.length > 3 ? '；另有 ' + (errors.length - 3) + ' 项' : '') : '';
+        setErrorBox('targetError', message);
+        return errors.length ? '质量目标：' + message + '。' : '';
+      }
+
+      function validateStages() {
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#stageTable tbody tr'));
+        var errors = [];
+        var previousEnd = null;
+        var previousMax = 0;
+        rows.forEach(function (row, index) {
+          var startEl = row.querySelector('.stage-start');
+          var endEl = row.querySelector('.stage-end');
+          var minEl = row.querySelector('.stage-min');
+          var maxEl = row.querySelector('.stage-max');
+          [startEl, endEl, minEl, maxEl].forEach(function (el) { el.classList.remove('invalid'); });
+          var start = numberValue(startEl);
+          var end = numberValue(endEl);
+          var min = numberValue(minEl);
+          var max = numberValue(maxEl);
+          if (index === 0 && start !== 0) {
+            startEl.classList.add('invalid');
+            errors.push('第一阶段必须从 T0 开始');
+          }
+          if (start >= end) {
+            startEl.classList.add('invalid'); endEl.classList.add('invalid');
+            errors.push('第' + (index + 1) + '阶段的开始时间必须早于结束时间');
+          }
+          if (previousEnd !== null && start !== previousEnd) {
+            startEl.classList.add('invalid');
+            errors.push('相邻阶段的时间区间必须首尾相接');
+          }
+          if (min < 0 || max > 100 || min > max) {
+            minEl.classList.add('invalid'); maxEl.classList.add('invalid');
+            errors.push('累计完成比例必须在 0%–100% 内，且下限不能大于上限');
+          }
+          if (index > 0 && min < previousMax) {
+            minEl.classList.add('invalid');
+            errors.push('累计完成比例必须逐阶段递增');
+          }
+          if (index === rows.length - 1 && (min !== 100 || max !== 100)) {
+            minEl.classList.add('invalid'); maxEl.classList.add('invalid');
+            errors.push('第四阶段累计完成比例必须固定为 100%');
+          }
+          previousEnd = end;
+          previousMax = max;
+        });
+        var error = errors.filter(function (message, index, items) { return items.indexOf(message) === index; }).join('；');
+        setErrorBox('stageError', error);
+        return error ? '七天回填：' + error + '。' : '';
+      }
+
+      function validateHumanInteraction() {
+        var favoriteErrors = [];
+        var milestoneInputs = Array.prototype.slice.call(document.querySelectorAll('.favorite-milestone'));
+        var previousMilestone = 0;
+        if (!milestoneInputs.length) favoriteErrors.push('至少需要配置一个播放里程碑');
+        milestoneInputs.forEach(function (el, index) {
+          el.classList.remove('invalid');
+          var value = numberValue(el);
+          if (!Number.isInteger(value) || value <= 0) {
+            el.classList.add('invalid');
+            favoriteErrors.push('播放里程碑必须为大于 0 的整数');
+          }
+          if (index > 0 && value <= previousMilestone) {
+            el.classList.add('invalid');
+            favoriteErrors.push('播放里程碑必须不可重复并严格递增');
+          }
+          previousMilestone = value;
+        });
+        var favoriteRateEl = document.getElementById('favoriteRate');
+        favoriteRateEl.classList.remove('invalid');
+        if (numberValue(favoriteRateEl) < 0 || numberValue(favoriteRateEl) > 100) {
+          favoriteRateEl.classList.add('invalid');
+          favoriteErrors.push('收藏抽样概率必须在 0%–100% 之间');
+        }
+        favoriteErrors = favoriteErrors.filter(function (message, index, items) { return items.indexOf(message) === index; });
+        setErrorBox('favoriteError', favoriteErrors.join('；'));
+
+        var followErrors = [];
+        var followRows = Array.prototype.slice.call(document.querySelectorAll('#followMilestoneBody tr'));
+        var previousPlay = 0;
+        var previousHuman = 0;
+        if (!followRows.length) followErrors.push('至少需要配置一个关注级别');
+        followRows.forEach(function (row, index) {
+          var playEl = row.querySelector('.follow-play');
+          var humanEl = row.querySelector('.follow-human');
+          var rateEl = row.querySelector('.follow-rate');
+          var play = numberValue(playEl);
+          var human = numberValue(humanEl);
+          var rate = numberValue(rateEl);
+          [playEl, humanEl, rateEl].forEach(function (el) { el.classList.remove('invalid'); });
+          if (!Number.isInteger(play) || play <= 0) {
+            playEl.classList.add('invalid');
+            followErrors.push('累计真人播放门槛必须为大于 0 的整数');
+          }
+          if (!Number.isInteger(human) || human < 1) {
+            humanEl.classList.add('invalid');
+            followErrors.push('累计真人互动门槛必须为大于等于 1 的整数');
+          }
+          if (rateEl.value === '' || !Number.isFinite(Number(rateEl.value)) || rate < 0 || rate > 100) {
+            rateEl.classList.add('invalid');
+            followErrors.push('每级关注抽样概率必须在 0%–100% 之间');
+          }
+          if (index > 0 && play <= previousPlay) {
+            playEl.classList.add('invalid');
+            followErrors.push('关注级别的累计真人播放门槛必须严格递增');
+          }
+          if (index > 0 && human <= previousHuman) {
+            humanEl.classList.add('invalid');
+            followErrors.push('关注级别的累计真人互动门槛必须严格递增');
+          }
+          previousPlay = play;
+          previousHuman = human;
+        });
+        followErrors = followErrors.filter(function (message, index, items) { return items.indexOf(message) === index; });
+        setErrorBox('followError', followErrors.join('；'));
+
+        var messages = [];
+        if (favoriteErrors.length) messages.push('真人作品收藏：' + favoriteErrors.join('；'));
+        if (followErrors.length) messages.push('关注真人创作者：' + followErrors.join('；'));
+        return messages.join('；');
+      }
+
+      function validateDailyCaps() {
+        var errors = [];
+        var total = numberValue('dailyTotal');
+        var maxSingle = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('.daily-cap'), function (el) { return numberValue(el); }));
+        document.getElementById('dailyTotal').classList.toggle('invalid', total < maxSingle);
+        if (total < maxSingle) errors.push('每日全部行为合计上限不能低于任一单项上限');
+        return errors.join('；');
+      }
+
+      function validateAll() {
+        var errors = [];
+        var guide = updateGuide();
+        if (guide) errors.push('评论引导：' + guide);
+        [validateMissing(), validateThresholds(), validateTargets(), validateHumanInteraction(), validateStages(), validateDailyCaps()].forEach(function (message) {
+          if (message) errors.push(message);
+        });
+        return errors;
+      }
+
+      function updateSummaries() {
+        document.getElementById('summaryDaily').textContent = numberValue('dailyTotal') + ' 次';
+      }
+
+      function onConfigurationChange() {
+        updateGuide();
+        validateMissing();
+        validateTargets();
+        validateHumanInteraction();
+        validateStages();
+        updateSummaries();
+        markDirty();
+      }
+
+      function saveDraft() {
+        localStorage.setItem(storageKey, serializeForm());
+        hasSavedSnapshot = true;
+        dirtyBar.classList.remove('show');
+        document.getElementById('headerStatus').innerHTML = '<span class="dot"></span>草稿已保存';
+        showToast('草稿已保存在当前浏览器');
+      }
+
+      function openPublish() {
+        var errors = validateAll();
+        if (errors.length) {
+          var list = document.getElementById('validationList');
+          list.innerHTML = '';
+          errors.forEach(function (message) {
+            var li = document.createElement('li');
+            li.textContent = message;
+            list.appendChild(li);
+          });
+          document.getElementById('validationModal').classList.add('show');
+          return;
+        }
+        document.getElementById('publishModal').classList.add('show');
+      }
+
+      function closeModals() {
+        document.querySelectorAll('.modal-backdrop').forEach(function (modal) { modal.classList.remove('show'); });
+      }
+
+      document.addEventListener('click', function (event) {
+        var action = event.target.closest('[data-action]');
+        if (!action) return;
+        var name = action.dataset.action;
+        if (name === 'save') saveDraft();
+        if (name === 'publish') openPublish();
+        if (name === 'close-modal') closeModals();
+        if (name === 'reset') {
+          if (!window.confirm('确认恢复 PRD v1.5 默认基础值？当前未保存修改将丢失。')) return;
+          restoreForm(initialSnapshot);
+          localStorage.removeItem(storageKey);
+          hasSavedSnapshot = false;
+          document.querySelectorAll('input.invalid, select.invalid').forEach(function (el) { el.classList.remove('invalid'); });
+          onConfigurationChange();
+          dirtyBar.classList.remove('show');
+          showToast('已恢复 PRD v1.5 默认值');
+        }
+      });
+
+      document.getElementById('confirmPublish').addEventListener('click', function () {
+        localStorage.setItem(storageKey, serializeForm());
+        hasSavedSnapshot = true;
+        dirtyBar.classList.remove('show');
+        document.getElementById('headerStatus').innerHTML = '<span class="dot"></span>已发布';
+        document.getElementById('headerStatus').style.color = '#16865a';
+        document.getElementById('headerStatus').style.background = '#ecfdf3';
+        closeModals();
+        showToast('配置已发布（原型演示）');
+      });
+
+      document.getElementById('addComment').addEventListener('click', function () {
+        document.getElementById('newCommentContent').value = '';
+        document.getElementById('newCommentLanguage').value = 'en';
+        setErrorBox('newCommentError', '');
+        document.getElementById('addCommentModal').classList.add('show');
+      });
+
+      document.getElementById('confirmAddComment').addEventListener('click', function () {
+        var content = document.getElementById('newCommentContent').value.trim();
+        var language = document.getElementById('newCommentLanguage').value;
+        if (!content) { setErrorBox('newCommentError', '请输入评论内容。'); return; }
+        if (!language) { setErrorBox('newCommentError', '请选择语言。'); return; }
+        var result = addComments([{ content: content, language: language }]);
+        if (!result.added) { setErrorBox('newCommentError', '相同语言下已存在该评论内容，无需重复新增。'); return; }
+        closeModals();
+        showToast('评论已新增');
+      });
+
+      document.getElementById('uploadComments').addEventListener('click', function () {
+        document.getElementById('commentFile').click();
+      });
+
+      document.getElementById('commentFile').addEventListener('change', function (event) {
+        var file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (/\.csv$/i.test(file.name)) importCsv(file);
+        else if (/\.xlsx$/i.test(file.name)) showToast('已接收 ' + file.name + '，正式后台将解析“评论内容、语言”列');
+        else showToast('仅支持 CSV 或 XLSX 文件');
+        event.target.value = '';
+      });
+
+      document.getElementById('commentLibraryBody').addEventListener('click', function (event) {
+        var button = event.target.closest('.delete-comment');
+        if (!button) return;
+        commentLibrary = commentLibrary.filter(function (item) { return item.id !== button.dataset.commentId; });
+        saveCommentLibrary();
+        renderCommentLibrary();
+        showToast('评论文案已删除');
+      });
+
+      document.getElementById('addFavoriteMilestone').addEventListener('click', function () {
+        var values = getFavoriteMilestones();
+        var positiveValues = values.filter(function (value) { return Number.isInteger(value) && value > 0; });
+        var nextValue = (positiveValues.length ? Math.max.apply(null, positiveValues) : 0) + 200;
+        values.push(nextValue);
+        renderFavoriteMilestones(values);
+        onConfigurationChange();
+      });
+
+      document.getElementById('favoriteMilestoneBody').addEventListener('click', function (event) {
+        var button = event.target.closest('.delete-milestone');
+        if (!button) return;
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#favoriteMilestoneBody tr'));
+        if (rows.length <= 1) { showToast('至少需要保留一个播放里程碑'); return; }
+        var rowIndex = rows.indexOf(button.closest('tr'));
+        var values = getFavoriteMilestones();
+        values.splice(rowIndex, 1);
+        renderFavoriteMilestones(values);
+        onConfigurationChange();
+      });
+
+      document.getElementById('addFollowMilestone').addEventListener('click', function () {
+        var values = getFollowMilestones();
+        var last = values[values.length - 1] || { play: 0, interaction: 0, rate: 3 };
+        var previous = values[values.length - 2] || { play: 0, interaction: 0 };
+        values.push({
+          id: makeFollowMilestoneId(),
+          play: last.play + Math.max(last.play - previous.play, 500),
+          interaction: last.interaction + Math.max(last.interaction - previous.interaction, 1),
+          rate: last.rate
+        });
+        renderFollowMilestones(values);
+        onConfigurationChange();
+      });
+
+      document.getElementById('followMilestoneBody').addEventListener('click', function (event) {
+        var button = event.target.closest('.delete-follow-milestone');
+        if (!button) return;
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#followMilestoneBody tr'));
+        if (rows.length <= 1) { showToast('至少需要保留一个关注级别'); return; }
+        var rowIndex = rows.indexOf(button.closest('tr'));
+        var values = getFollowMilestones();
+        values.splice(rowIndex, 1);
+        renderFollowMilestones(values);
+        onConfigurationChange();
+      });
+
+      form.addEventListener('input', onConfigurationChange);
+      form.addEventListener('change', onConfigurationChange);
+
+      document.querySelectorAll('.modal-backdrop').forEach(function (modal) {
+        modal.addEventListener('click', function (event) { if (event.target === modal) closeModals(); });
+      });
+      document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closeModals(); });
+
+      var pageLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-item[data-page]'));
+
+      function setPage(page, updateHash) {
+        var isLibrary = page === 'library';
+        document.body.classList.toggle('embedded-library', embedded && isLibrary);
+        document.querySelectorAll('[data-page-panel]').forEach(function (panel) {
+          panel.classList.toggle('page-hidden', panel.dataset.pagePanel !== page);
+        });
+        pageLinks.forEach(function (link) { link.classList.toggle('active', link.dataset.page === page); });
+        document.querySelectorAll('.general-only').forEach(function (element) { element.classList.toggle('page-hidden', isLibrary); });
+        document.getElementById('currentPageName').textContent = isLibrary ? '机器人评论库' : '通用配置';
+        if (isLibrary) dirtyBar.classList.remove('show');
+        else markDirty();
+        if (updateHash) history.replaceState(null, '', isLibrary ? '#comment-library' : '#general-config');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+
+      pageLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          setPage(link.dataset.page, true);
+        });
+      });
+
+      var saved = localStorage.getItem(storageKey);
+      if (saved) {
+        restoreForm(saved);
+        hasSavedSnapshot = true;
+        document.getElementById('headerStatus').innerHTML = '<span class="dot"></span>草稿已保存';
+      }
+      updateGuide();
+      validateMissing();
+      validateTargets();
+      validateHumanInteraction();
+      validateStages();
+      updateSummaries();
+      renderCommentLibrary();
+      dirtyBar.classList.remove('show');
+      setPage(window.location.hash === '#comment-library' ? 'library' : 'general', false);
+    }());
+  </script>
+</body>
+</html>

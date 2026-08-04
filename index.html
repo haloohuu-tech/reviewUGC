@@ -33,8 +33,11 @@
       <div class="nav-label">订单查询</div>
       <a href="#subscription-orders" data-page="subscription-orders"><svg><use href="#i-file"/></svg><span>订阅订单流水</span></a>
       <a href="#pack-orders" data-page="pack-orders"><svg><use href="#i-file"/></svg><span>加油包订单流水</span></a>
+      <div class="nav-label">AI 机器人配置</div>
+      <a href="#robot-general" data-page="robot-general"><svg><use href="#i-sliders"/></svg><span>通用配置</span></a>
+      <a href="#robot-library" data-page="robot-library"><svg><use href="#i-file"/></svg><span>机器人评论库</span></a>
     </nav>
-    <div class="mvp-note"><b>运营范围</b><p>内容审核、用户资产与订单查询</p><span>Vanso 统一运营工作台</span></div>
+    <div class="mvp-note"><b>运营范围</b><p>内容审核、资产订单与 AI 机器人配置</p><span>Vanso 统一运营工作台</span></div>
     <div class="sidebar-foot"><span class="status-dot"></span><div><b>运营服务正常</b><small>最近检查 14:32</small></div></div>
   </aside>
 
@@ -300,6 +303,14 @@
           <div class="pagination"><span>每页 20 条 · 第 1 / 192 页</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>…</button><button>192</button><button>›</button></div></div>
         </article>
       </section>
+
+      <section class="page robot-config-page" data-view="robot-general">
+        <iframe class="robot-config-frame" src="robot-config.html?embed=1#general-config" title="AI 机器人通用配置"></iframe>
+      </section>
+
+      <section class="page robot-config-page" data-view="robot-library">
+        <iframe class="robot-config-frame" src="robot-config.html?embed=1#comment-library" title="机器人评论库"></iframe>
+      </section>
     </div>
   </main>
 
@@ -330,7 +341,7 @@
     <div class="confirm-icon"><svg><use href="#i-alert"/></svg></div><h2>确认驳回该内容？</h2><p>驳回后内容将立即下架，任务进入不可编辑终态，无法再次修改审核结论。</p><label><span>驳回原因</span><select id="rejectReason"><option value="">请选择原因</option><option>色情低俗</option><option>骚扰辱骂</option><option>广告垃圾</option><option>其他违规</option></select></label><div><button class="btn ghost" data-close-confirm>取消</button><button class="btn danger" id="confirmReject">确认驳回</button></div>
   </div>
 
-  <div class="command-palette" id="commandPalette"><div class="command-box"><svg><use href="#i-search"/></svg><input autofocus placeholder="搜索功能或用户…"/><kbd>ESC</kbd></div><div class="command-results"><span>Vanso 运营后台快速跳转</span><button data-route="reviews"><svg><use href="#i-check"/></svg>审核任务<small>1,284 条待处理</small></button><button data-route="tasks"><svg><use href="#i-search"/></svg>任务查询<small>查询与运营驳回</small></button><button data-route="policies"><svg><use href="#i-sliders"/></svg>策略中心<small>内容审核规则</small></button><button data-route="user-assets"><svg><use href="#i-user"/></svg>用户资产查询<small>余额与会员权益</small></button><button data-route="credit-ledger"><svg><use href="#i-clock"/></svg>Credits 消耗流水<small>消费与过期</small></button><button data-route="subscription-orders"><svg><use href="#i-file"/></svg>订阅订单流水<small>支付与业务状态</small></button><button data-route="pack-orders"><svg><use href="#i-file"/></svg>加油包订单流水<small>到账与到期</small></button></div></div>
+  <div class="command-palette" id="commandPalette"><div class="command-box"><svg><use href="#i-search"/></svg><input autofocus placeholder="搜索功能或用户…"/><kbd>ESC</kbd></div><div class="command-results"><span>Vanso 运营后台快速跳转</span><button data-route="reviews"><svg><use href="#i-check"/></svg>审核任务<small>1,284 条待处理</small></button><button data-route="tasks"><svg><use href="#i-search"/></svg>任务查询<small>查询与运营驳回</small></button><button data-route="policies"><svg><use href="#i-sliders"/></svg>策略中心<small>内容审核规则</small></button><button data-route="user-assets"><svg><use href="#i-user"/></svg>用户资产查询<small>余额与会员权益</small></button><button data-route="credit-ledger"><svg><use href="#i-clock"/></svg>Credits 消耗流水<small>消费与过期</small></button><button data-route="subscription-orders"><svg><use href="#i-file"/></svg>订阅订单流水<small>支付与业务状态</small></button><button data-route="pack-orders"><svg><use href="#i-file"/></svg>加油包订单流水<small>到账与到期</small></button><button data-route="robot-general"><svg><use href="#i-sliders"/></svg>AI 机器人通用配置<small>评论、轻互动与繁荣度回填</small></button><button data-route="robot-library"><svg><use href="#i-file"/></svg>机器人评论库<small>上传、新增与删除</small></button></div></div>
   <div class="toast" id="toast"><svg><use href="#i-check"/></svg><span>操作成功</span></div>
   <script src="app.js"></script>
 </body>
